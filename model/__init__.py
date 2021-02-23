@@ -1,47 +1,42 @@
-import segmentation_models_pytorch as smp
 import torch
-import torchvision
+import segmentation_models_pytorch as smp
+
+# 建立模型：https://cuijiahua.com/blog/2019/12/dl-15.html
+# 训练框架：https://github.com/Jack-Cherish/Deep-Learning/blob/master/Pytorch-Seg/lesson-2/train.py
+# 模型选型：https://github.com/qubvel/segmentation_models
+
+encoder = 'resnet18'
+encoder_weight = 'imagenet'
+classes = 1
+in_channel = 1
+activation = 'sigmoid'
+device = 'cpu'
 
 
 def create_model(args=None):
-    if args is None:
-        args = []
-    fpn, preprocess = FPN_Resnet()
-    return fpn
-
-
-import torch
-import numpy as np
-import segmentation_models_pytorch as smp
-
-
-def FPN_Resnet(
-        encoder='resnet18',
-        encoder_weight='imagenet',
-        classes=None,
-        in_channel=1,
-        activation='sigmoid',
-        device='cuda'):
-    # could be None for logits or 'softmax2d' for multicalss segmentation
-    # create segmentation model with pretrained encoder
-    if classes is None:
-        classes = ['valley']
-    model = smp.FPN(
-        encoder_name=encoder,
-        encoder_weights=encoder_weight,
-        in_channels=1,
-        classes=len(classes),
-        activation=activation,
-    )
-    # model.cuda(device)
-    preprocessing_fn = smp.encoders.get_preprocessing_fn(encoder, encoder_weight)
-    return model, preprocessing_fn
+    global model
+    if args == 'FPN':
+        model = smp.FPN(
+            encoder_name=encoder,
+            encoder_weights=encoder_weight,
+            classes=classes,
+            in_channels=in_channel,
+            activation=activation,
+        )
+    elif args == 'UNet':
+        model = smp.Unet(
+            encoder_name=encoder,
+            encoder_weights=encoder_weight,
+            classes=classes,
+            in_channels=in_channel,
+            activation=activation)
+    return model
 
 
 if __name__ == '__main__':
-    model = create_model()
+    model = create_model('UNet')
     x = torch.randn((64, 1, 256, 256))
     print(x.shape)
-    print(model)
-    y = model(x)
+    # print(model)
+    y = model(x)  # torch.Size([64, 1, 256, 256])
     print(y.shape)
