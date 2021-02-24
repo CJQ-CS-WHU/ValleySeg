@@ -1,3 +1,9 @@
+import sys
+import os
+project_path = os.path.abspath(os.path.dirname(__file__))
+print(project_path)
+sys.path.append(project_path + r'/../data')
+
 import segmentation_models_pytorch as smp
 import torch
 import torchvision
@@ -9,12 +15,12 @@ import torch.nn.functional as F
 # IoU/Jaccard score - https://en.wikipedia.org/wiki/Jaccard_index
 # 启动tensorboardX命令：
 # 训练参数设定
-DEVICE = 'cpu'
+DEVICE = 'cuda'
 NUM_EPOCH = 40
 SAVE_PRE = 1000
 EVAL_PRE = 1000
 PRINT_PRE = 1
-SAVE_DIR = r'F:\ValleySeg\pth'
+SAVE_DIR = project_path + r'\pth'
 
 writer = SummaryWriter(r'F:\ValleySeg\result\log')  # 数据存放在这个文件夹
 NUM_STEPS_STOP = 100000
@@ -23,7 +29,7 @@ train_loader, valid_loader = create_valley_data_loader()
 
 # 模型
 # fpn = model.create_model()
-net = smp.FPN('resnet18', in_channels=1, classes=2)
+net = smp.FPN('resnet18', in_channels=1, classes=2).cuda()
 
 # 损失函数
 loss = torch.nn.CrossEntropyLoss()
@@ -53,11 +59,11 @@ def train():
             i += 1
             optimizer.zero_grad()
             # print(dem.size())
-            pred = net(dem)
+            pred = net(dem.cuda())
             # print(pred.size())
             # print(label.size())
-            seg_loss = loss(pred, label)
-            mIOU = metrics[0]()
+            seg_loss = loss(pred, label).cpu().item()
+            mIOU = metrics[0](pred, label)
             seg_loss.backward()
             optimizer.step()
             train_loss += seg_loss
@@ -68,13 +74,14 @@ def train():
                 torch.save(net.state_dict(), SAVE_DIR + '/iter_' + str(i) + '.pth')
 
             # 模型检验
+            val_len = len(valid_loader)
             if i % EVAL_PRE == 0:
                 val_loss = 0.0
                 net.eval()
                 for eval_dem, eval_label in valid_loader:
-                    eval_pred = net(eval_dem)
-                    val_loss += loss(eval_pred, eval_label)
-                val_loss /= len(valid_loader)
+                    eval_pred = net(eval_dem.cuda())
+                    val_loss += loss(eval_pred, eval_label).cpu().item()
+                val_loss /= val_len
 
             # 记录参数
             writer.add_scalar('seg loss', seg_loss, i)

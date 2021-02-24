@@ -1,10 +1,13 @@
 import sys
+import os
 
+project_path = os.path.abspath(os.path.dirname(__file__))
+print(project_path)
 sys.path.append(r'D:\anaconda3\envs\pytorch_py36\Library\bin\libtiff.dll')
 sys.path.append(r'D:\anaconda3\envs\pytorch_py36\conda-meta\libtiff-4.1.0-h56a325e_1.json')
 from PIL import Image
 # from libtiff import TIFF
-from imgaug.augmenters import HorizontalFlip
+# from imgaug.augmenters import HorizontalFlip
 import torch
 from torch.utils import data
 from torch.utils.data.dataloader import DataLoader
@@ -26,7 +29,6 @@ class ValleyDataset(data.Dataset):
         self.transforms = get_transforms(mean, std, phase)
         self.tif_stream = []
         self.label_stream = []
-
         _len = len(self.df)
         for idx in range(0, _len):
             name = self.df.loc[idx][0]
@@ -34,8 +36,8 @@ class ValleyDataset(data.Dataset):
             label_path = self.root + '/labels/' + str(name) + '.png'
             dem = Image.open(dem_path)
             label = Image.open(label_path)
-            self.tif_stream.append(dem)
-            self.label_stream.append(label)
+            self.tif_stream.append(dem.copy())
+            self.label_stream.append(label.copy())
 
     def __len__(self):
         return len(self.df)
@@ -75,7 +77,7 @@ def get_transforms(mean, std, phase):
     if phase == 'train':
         # 可训练时需要的预处理方法
         list_transforms.extend([
-            HorizontalFlip(p=0.5),  # only horizontal flip as of now
+            # HorizontalFlip(p=0.5),  # only horizontal flip as of now
         ])
     elif phase == 'val':
         # 可检验时需要的预处理方法
@@ -95,7 +97,7 @@ def get_transforms(mean, std, phase):
 
 if __name__ == '__main__':
     dataset = ValleyDataset(
-        data_txt=r'F:\ValleySeg\datasets\train.txt',
-        data_folder=r'G:\ValleyDataset',
+        data_txt=project_path + r'/../datasets/train.txt',
+        data_folder=project_path + r'/../../..',
         mean=0, std=1, phase='train')
     visualize(dataset, [0, 1, 2])
