@@ -43,8 +43,10 @@ class ValleyDataset(data.Dataset):
     def __getitem__(self, idx):
         # print(self.tif_stream[idx])
         # print(np.array(self.label_stream[idx]).shape)
-        return torch.from_numpy(np.array(self.tif_stream[idx])).reshape(1, 256, 256).to(torch.float32), \
-               torch.from_numpy(np.array(self.label_stream[idx])).permute(2, 0, 1)[0].view(1, 256, 256)
+        dem = torch.from_numpy(np.array(self.tif_stream[idx])).reshape(1, 256, 256).to(torch.float32)
+        label = torch.from_numpy(np.array(self.label_stream[idx])).permute(2, 0, 1)[0].view(256, 256).long()
+        label[label == 255] = 1
+        return dem, label
 
 
 def visualize(dataset, idxs):
@@ -89,3 +91,11 @@ def get_transforms(mean, std, phase):
     )
     transforms = Compose(list_transforms)
     return transforms
+
+
+if __name__ == '__main__':
+    dataset = ValleyDataset(
+        data_txt=r'F:\ValleySeg\datasets\train.txt',
+        data_folder=r'G:\ValleyDataset',
+        mean=0, std=1, phase='train')
+    visualize(dataset, [0, 1, 2])

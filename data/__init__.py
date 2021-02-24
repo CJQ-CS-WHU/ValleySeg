@@ -18,7 +18,7 @@ def create_valley_data_loader(args=None):
 
     train_loader = DataLoader(
         train_dataset,
-        batch_size=2,
+        batch_size=3,
         num_workers=0,
         pin_memory=True,
         shuffle=True,
@@ -36,5 +36,5 @@ def create_valley_data_loader(args=None):
 
 if __name__ == '__main__':
     train_loader, test_loader = create_valley_data_loader()
-    for i in enumerate(train_loader):
-        pass
+    for i, (dem, label) in enumerate(train_loader):
+        print(0)
