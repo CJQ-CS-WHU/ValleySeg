@@ -21,7 +21,7 @@ def create_valley_data_loader(args=None):
 
     train_loader = DataLoader(
         train_dataset,
-        batch_size=2,
+        batch_size=1,
         num_workers=0,
         pin_memory=True,
         shuffle=True,

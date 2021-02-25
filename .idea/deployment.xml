@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="gaoli@172.16.158.5:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="gaoli@172.16.158.217:22" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="gaoli@172.16.158.217:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/gaoli/cjq/ValleySeg/code/ValleySeg" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="gaoli@172.16.158.5:22">
         <serverdata>
           <mappings>

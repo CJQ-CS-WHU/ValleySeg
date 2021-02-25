@@ -2,7 +2,6 @@ import sys
 import os
 
 project_path = os.path.abspath(os.path.dirname(__file__))
-print(project_path)
 sys.path.append(r'D:\anaconda3\envs\pytorch_py36\Library\bin\libtiff.dll')
 sys.path.append(r'D:\anaconda3\envs\pytorch_py36\conda-meta\libtiff-4.1.0-h56a325e_1.json')
 from PIL import Image
