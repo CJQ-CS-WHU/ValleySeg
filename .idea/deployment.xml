@@ -5,7 +5,7 @@
       <paths name="gaoli@172.16.158.217:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/gaoli/cjq/ValleySeg/code/ValleySeg" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/gaoli/cjq/ValleySeg/ValleySeg" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

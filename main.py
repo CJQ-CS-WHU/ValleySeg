@@ -2,8 +2,10 @@ import torch
 import torch
 from torch import nn
 import math
+from PIL import Image
+import matplotlib.pyplot as plt
 import torch.nn.functional as F
-
+import segmentation_models_pytorch as smp
 
 # class Mnist_net(nn.Module):
 #     def __init__(self):
@@ -55,28 +57,53 @@ if __name__ == '__main__':
 
     # print(gt_one_hot.argmax(-1) == gt)  # 判断one hot 转换方式是否正确，全是1就是正确的
     # ---------------------------------------------- #
-    import torch
-    from tensorboardX import SummaryWriter
+    # import torch
+    # from tensorboardX import SummaryWriter
+    #
+    # writer = SummaryWriter()
+    # x = torch.FloatTensor([100])
+    # y = torch.FloatTensor([500])
+    #
+    # for epoch in range(100):
+    #     x /= 1.5
+    #     y /= 1.5
+    #     loss = y - x
+    #     print(loss)
+    #     writer.add_histogram('zz/x', x, epoch)
+    #     writer.add_histogram('zz/y', y, epoch)
+    #     writer.add_scalar('data/x', x, epoch)
+    #     writer.add_scalar('data/y', y, epoch)
+    #     writer.add_scalar('data/loss', loss, epoch)
+    #     writer.add_scalars('data/scalar_group', {'x': x,
+    #                                              'y': y,
+    #                                              'loss': loss}, epoch)
+    #     writer.add_text('zz/text', 'zz: this is epoch ' + str(epoch), epoch)
+    #
+    # # export scalar data to JSON for external processing
+    # writer.export_scalars_to_json("./test.json")
+    # writer.close()
+    metrics = [
+        smp.utils.metrics.IoU(threshold=0.5),
+    ]
+    y_pre_1 = torch.zeros(1, 1, 256, 256).to(torch.float32)
+    y_pre_2 = torch.ones(1, 1, 256, 256).to(torch.float32)
 
-    writer = SummaryWriter()
-    x = torch.FloatTensor([100])
-    y = torch.FloatTensor([500])
+    y_pre = torch.cat([y_pre_2, y_pre_1], 1)
+    print(y_pre.shape)
+    y_label = torch.ones(1, 256, 256).long()
+    print(y_label.shape)
+    # iou = metrics[0](y_pre, y_label)
+    loss = torch.nn.CrossEntropyLoss()
+    # loss = smp.losses.FocalLoss(mode='binary', alpha=0.5)
+    l = loss(y_pre, y_label)
+    print(l)
+    # print(iou)
 
-    for epoch in range(100):
-        x /= 1.5
-        y /= 1.5
-        loss = y - x
-        print(loss)
-        writer.add_histogram('zz/x', x, epoch)
-        writer.add_histogram('zz/y', y, epoch)
-        writer.add_scalar('data/x', x, epoch)
-        writer.add_scalar('data/y', y, epoch)
-        writer.add_scalar('data/loss', loss, epoch)
-        writer.add_scalars('data/scalar_group', {'x': x,
-                                                 'y': y,
-                                                 'loss': loss}, epoch)
-        writer.add_text('zz/text', 'zz: this is epoch ' + str(epoch), epoch)
-
-    # export scalar data to JSON for external processing
-    writer.export_scalars_to_json("./test.json")
-    writer.close()
+def show_dem_label(dem, pred, label):
+    plt.subplot(2, 2, 1)
+    plt.title('DEM ' + str(image_idx))
+    plt.imshow(dem)
+    plt.subplot(2 * n, 2, 2 * i + 2)
+    plt.title('LABEL ' + str(image_idx))
+    plt.imshow(label)
+    print(2 * i + 2)

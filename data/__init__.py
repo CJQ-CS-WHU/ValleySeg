@@ -12,11 +12,11 @@ def create_valley_data_loader(args=None):
         args = []
     train_dataset = ValleyDataset(
         data_txt=project_path + r'/../datasets/train.txt',
-        data_folder=project_path + r'/../../..',
+        data_folder=project_path + r'/../..',
         mean=0, std=1, phase='train')
     valid_dataset = ValleyDataset(
         data_txt=project_path + r'/../datasets/train.txt',
-        data_folder=project_path + r'/../../..',
+        data_folder=project_path + r'/../..',
         mean=0, std=1, phase='valid')
 
     train_loader = DataLoader(
